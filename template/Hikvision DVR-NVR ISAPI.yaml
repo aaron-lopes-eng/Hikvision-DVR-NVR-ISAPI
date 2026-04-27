@@ -1,0 +1,773 @@
+zabbix_export:
+  version: '7.4'
+  template_groups:
+    - uuid: d37f71c7e3f7469bab645852a69a2018
+      name: 'Templates/Video surveillance'
+  templates:
+    - uuid: 518cda00eb414852a5d5965c71cacbb5
+      template: 'Template Hikvision DVR-NVR ISAPI'
+      name: 'Template Hikvision DVR-NVR ISAPI'
+      groups:
+        - name: 'Templates/Video surveillance'
+      items:
+        - uuid: 7cf8d93c42264342844c483b91e3a6f5
+          name: 'Firmware version'
+          type: DEPENDENT
+          key: hikvision.dvr.firmware
+          value_type: TEXT
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'string(//*[local-name()=''firmwareVersion''])'
+          master_item:
+            key: hikvision.dvr.system.deviceinfo
+          triggers:
+            - uuid: 75a211ba788047cb8c7d429d69b0acff
+              expression: 'last(/Template Hikvision DVR-NVR ISAPI/hikvision.dvr.firmware)<>last(/Template Hikvision DVR-NVR ISAPI/hikvision.dvr.firmware,#2)'
+              name: 'DVR Firmware has changed'
+              priority: INFO
+              manual_close: 'YES'
+        - uuid: 577d6ed3bd1f400bbda742915ebce526
+          name: 'Firmware release date'
+          type: DEPENDENT
+          key: hikvision.dvr.firmware.date
+          value_type: TEXT
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'string(//*[local-name()=''firmwareReleasedDate''])'
+          master_item:
+            key: hikvision.dvr.system.deviceinfo
+        - uuid: be91ad67b0de40719d7ac530eab55fb3
+          name: 'MAC address'
+          type: DEPENDENT
+          key: hikvision.dvr.mac
+          value_type: TEXT
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'string(//*[local-name()=''macAddress''])'
+          master_item:
+            key: hikvision.dvr.system.deviceinfo
+        - uuid: ac17d2daa5f440c595995160934ba740
+          name: 'Device model'
+          type: DEPENDENT
+          key: hikvision.dvr.model
+          value_type: TEXT
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'string(//*[local-name()=''model''])'
+          master_item:
+            key: hikvision.dvr.system.deviceinfo
+        - uuid: 11146780a2a64bc78b039af724c669bc
+          name: 'Device name'
+          type: DEPENDENT
+          key: hikvision.dvr.name
+          value_type: TEXT
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'string(//*[local-name()=''deviceName''])'
+          master_item:
+            key: hikvision.dvr.system.deviceinfo
+        - uuid: 2381777e64204f3da2b027ae522e5417
+          name: 'Primary DNS'
+          type: DEPENDENT
+          key: hikvision.dvr.net.dns.primary
+          value_type: TEXT
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'string((//*[local-name()=''PrimaryDNS'']//*[local-name()=''ipAddress''])[1])'
+          master_item:
+            key: hikvision.dvr.network.interfaces
+        - uuid: 9fa25c28309b47ad9fa083bbd0eb8797
+          name: 'Secondary DNS'
+          type: DEPENDENT
+          key: hikvision.dvr.net.dns.secondary
+          value_type: TEXT
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'string((//*[local-name()=''SecondaryDNS'']//*[local-name()=''ipAddress''])[1])'
+          master_item:
+            key: hikvision.dvr.network.interfaces
+        - uuid: 52255d9f0c984ef0998c1e498f035c87
+          name: 'Default gateway'
+          type: DEPENDENT
+          key: hikvision.dvr.net.gateway
+          value_type: TEXT
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'string((//*[local-name()=''DefaultGateway'']//*[local-name()=''ipAddress''])[1])'
+          master_item:
+            key: hikvision.dvr.network.interfaces
+        - uuid: 56c21168a96c43beba1038787eec2058
+          name: 'IPv4 address'
+          type: DEPENDENT
+          key: hikvision.dvr.net.ipv4
+          value_type: TEXT
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'string((//*[local-name()=''NetworkInterface''])[1]//*[local-name()=''ipAddress''][1])'
+          master_item:
+            key: hikvision.dvr.network.interfaces
+        - uuid: f927f2d3d7ef425eaaf5a1f9d0a6be9b
+          name: 'Interface MTU'
+          type: DEPENDENT
+          key: hikvision.dvr.net.mtu
+          trends: '0'
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'number((//*[local-name()=''MTU''])[1])'
+          master_item:
+            key: hikvision.dvr.network.interfaces
+        - uuid: 72bb5b916cb2434b884d58764a2f233b
+          name: 'Subnet mask'
+          type: DEPENDENT
+          key: hikvision.dvr.net.subnet
+          value_type: TEXT
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'string((//*[local-name()=''subnetMask''])[1])'
+          master_item:
+            key: hikvision.dvr.network.interfaces
+        - uuid: 5cd0c86146b64317a1e1f72d3e6d57e5
+          name: 'ISAPI: Network interfaces'
+          type: HTTP_AGENT
+          key: hikvision.dvr.network.interfaces
+          delay: 1h
+          history: '0'
+          value_type: TEXT
+          authtype: DIGEST
+          username: YOUR_USERNAME
+          password: YOUR_PASSWORD
+          url: 'http://{HOST.CONN}/ISAPI/System/Network/interfaces'
+        - uuid: 546134539a004367850be880752b74b5
+          name: 'Serial number'
+          type: DEPENDENT
+          key: hikvision.dvr.serial
+          value_type: TEXT
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'string(//*[local-name()=''serialNumber''])'
+          master_item:
+            key: hikvision.dvr.system.deviceinfo
+        - uuid: 6f081da8342d42edbe7ae8b197afb295
+          name: 'ISAPI: Storage'
+          type: HTTP_AGENT
+          key: hikvision.dvr.storage
+          history: '0'
+          value_type: TEXT
+          authtype: DIGEST
+          username: YOUR_USERNAME
+          password: YOUR_PASSWORD
+          url: 'http://{HOST.CONN}/ISAPI/ContentMgmt/Storage'
+        - uuid: 74a6a5396d834a5bab6714a88bb0acf9
+          name: 'Storage: Work mode'
+          type: DEPENDENT
+          key: hikvision.dvr.storage.workmode
+          value_type: CHAR
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - '//*[local-name()=''workMode'']/text()'
+          master_item:
+            key: hikvision.dvr.storage
+        - uuid: 600516dd0d984b878c7e81e9576b8a7f
+          name: 'ISAPI: System device info'
+          type: HTTP_AGENT
+          key: hikvision.dvr.system.deviceinfo
+          delay: 1h
+          history: '0'
+          value_type: TEXT
+          authtype: DIGEST
+          username: YOUR_USERNAME
+          password: YOUR_PASSWORD
+          url: 'http://{HOST.CONN}/ISAPI/System/deviceInfo'
+        - uuid: 38ff7db9f112455f9ce514b565c242a8
+          name: 'ISAPI: System status'
+          type: HTTP_AGENT
+          key: hikvision.dvr.system.status
+          delay: 30s
+          history: '0'
+          value_type: TEXT
+          authtype: DIGEST
+          username: YOUR_USERNAME
+          password: YOUR_PASSWORD
+          url: 'http://{HOST.CONN}/ISAPI/System/status'
+        - uuid: 7f0eecc116b0405f9ee0ed9667af0dd4
+          name: 'ISAPI: System time'
+          type: HTTP_AGENT
+          key: hikvision.dvr.system.time
+          delay: 5m
+          history: '0'
+          value_type: TEXT
+          authtype: DIGEST
+          username: YOUR_USERNAME
+          password: YOUR_PASSWORD
+          url: 'http://{HOST.CONN}/ISAPI/System/time'
+        - uuid: dc47ab8b1b4e4991830cc73b4ad62210
+          name: 'Device local time (epoch)'
+          type: DEPENDENT
+          key: hikvision.dvr.time.epoch
+          value_type: FLOAT
+          trends: '0'
+          units: unixtime
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'string(//*[local-name()=''localTime''])'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var d = new Date(value);
+                  return Math.floor(d.getTime() / 1000);
+          master_item:
+            key: hikvision.dvr.system.time
+          triggers:
+            - uuid: 51180c2b2a9e46df822235f76487a451
+              expression: 'abs(last(/Template Hikvision DVR-NVR ISAPI/hikvision.dvr.time.epoch)-now())>60'
+              name: 'DVR Time drift'
+              opdata: 'DVR Time: {ITEM.LASTVALUE1} | Server Time: time()'
+              status: DISABLED
+              priority: AVERAGE
+              manual_close: 'YES'
+        - uuid: a212fdc7370e489dae4c362961bcc7f6
+          name: 'Device local time'
+          type: DEPENDENT
+          key: hikvision.dvr.time.local
+          value_type: TEXT
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'string(//*[local-name()=''localTime''])'
+          master_item:
+            key: hikvision.dvr.system.time
+        - uuid: ae861c11e11341d996f5316c61862f48
+          name: 'Time mode'
+          type: DEPENDENT
+          key: hikvision.dvr.time.mode
+          value_type: TEXT
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'string(//*[local-name()=''timeMode''])'
+          master_item:
+            key: hikvision.dvr.system.time
+        - uuid: dad3238ec9944482bbc3cfe6c9320ebc
+          name: 'Time zone'
+          type: DEPENDENT
+          key: hikvision.dvr.time.zone
+          value_type: TEXT
+          preprocessing:
+            - type: XMLPATH
+              parameters:
+                - 'string(//*[local-name()=''timeZone''])'
+          master_item:
+            key: hikvision.dvr.system.time
+        - uuid: 2f65bb307f5948998f6755ee9f5f3c54
+          name: 'ISAPI: Video input channels'
+          type: HTTP_AGENT
+          key: hikvision.dvr.video.inputs
+          history: '0'
+          value_type: TEXT
+          authtype: DIGEST
+          username: YOUR_USERNAME
+          password: YOUR_PASSWORD
+          preprocessing:
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  // This removes all occurrences of the xmlns attribute
+                  return value.replace(/xmlns="[^"]+"/g, "");
+            - type: XML_TO_JSON
+          url: 'http://{HOST.CONN}/ISAPI/System/Video/inputs/channels'
+        - uuid: ec120100fe4a4f41b9f40a8910dcb43c
+          name: 'ISAPI: Video input channels IP'
+          type: HTTP_AGENT
+          key: hikvision.dvr.video.inputs.ip
+          history: '0'
+          value_type: TEXT
+          authtype: DIGEST
+          username: YOUR_USERNAME
+          password: YOUR_PASSWORD
+          preprocessing:
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  // This removes all occurrences of the xmlns attribute
+                  return value.replace(/xmlns="[^"]+"/g, "");
+            - type: XML_TO_JSON
+          timeout: 15s
+          url: 'http://{HOST.CONN}/ISAPI/ContentMgmt/InputProxy/channels'
+      discovery_rules:
+        - uuid: 5b9466313b4447a1b6c1680e9b74fa04
+          name: 'HDD Discovery'
+          type: DEPENDENT
+          key: hikvision.storage.hdd.discovery
+          item_prototypes:
+            - uuid: deaf14bbd9aa4c4f8bcd4ae322b311b3
+              name: 'HDD {#HDD_NAME}: Capacity'
+              type: DEPENDENT
+              key: 'hikvision.hdd.capacity[{#HDD_ID}]'
+              history: 10d
+              trends: '0'
+              units: B
+              preprocessing:
+                - type: XMLPATH
+                  parameters:
+                    - '//*[local-name()=''hdd'' or local-name()=''nas''][*[local-name()=''id'']=''{#HDD_ID}'']/*[local-name()=''capacity'']/text()'
+                - type: MULTIPLIER
+                  parameters:
+                    - '1048576'
+              master_item:
+                key: hikvision.dvr.storage
+            - uuid: 3ad33952df5a4513b755116ae8c55fdb
+              name: 'HDD {#HDD_NAME}: Free Space'
+              type: DEPENDENT
+              key: 'hikvision.hdd.freespace[{#HDD_ID}]'
+              history: 10d
+              trends: '0'
+              units: B
+              preprocessing:
+                - type: XMLPATH
+                  parameters:
+                    - '//*[local-name()=''hdd'' or local-name()=''nas''][*[local-name()=''id'']=''{#HDD_ID}'']/*[local-name()=''freeSpace'']/text()'
+                - type: MULTIPLIER
+                  parameters:
+                    - '1048576'
+              master_item:
+                key: hikvision.dvr.storage
+            - uuid: e88412c9849149f89099b2a92fc640e5
+              name: 'HDD {#HDD_NAME}: Property'
+              type: DEPENDENT
+              key: 'hikvision.hdd.property[{#HDD_ID}]'
+              history: 10d
+              value_type: TEXT
+              preprocessing:
+                - type: XMLPATH
+                  parameters:
+                    - '//*[local-name()=''hdd'' or local-name()=''nas''][*[local-name()=''id'']=''{#HDD_ID}'']/*[local-name()=''property'']/text()'
+              master_item:
+                key: hikvision.dvr.storage
+            - uuid: 7334088cddcf41fdbf5ac97d046447f9
+              name: 'HDD {#HDD_NAME}: Status'
+              type: DEPENDENT
+              key: 'hikvision.hdd.status[{#HDD_ID}]'
+              history: 10d
+              value_type: TEXT
+              preprocessing:
+                - type: XMLPATH
+                  parameters:
+                    - '//*[local-name()=''hdd'' or local-name()=''nas''][*[local-name()=''id'']=''{#HDD_ID}'']/*[local-name()=''status'']/text()'
+              master_item:
+                key: hikvision.dvr.storage
+              trigger_prototypes:
+                - uuid: a478460c9e904852be4744937f3bfa86
+                  expression: |
+                    (last(/Template Hikvision DVR-NVR ISAPI/hikvision.hdd.status[{#HDD_ID}])<>"ok")
+                    and
+                    (last(/Template Hikvision DVR-NVR ISAPI/hikvision.hdd.status[{#HDD_ID}])<>"idle")
+                    and
+                    (last(/Template Hikvision DVR-NVR ISAPI/hikvision.hdd.status[{#HDD_ID}])<>"notexist")
+                  recovery_mode: RECOVERY_EXPRESSION
+                  recovery_expression: 'last(/Template Hikvision DVR-NVR ISAPI/hikvision.hdd.status[{#HDD_ID}])="ok"'
+                  name: 'HDD {#HDD_NAME}: Status is not OK (current status: {ITEM.LASTVALUE})'
+                  priority: DISASTER
+                  manual_close: 'YES'
+          master_item:
+            key: hikvision.dvr.storage
+          lld_macro_paths:
+            - lld_macro: '{#HDD_ID}'
+              path: $.id
+            - lld_macro: '{#HDD_KIND}'
+              path: $.hddKind
+            - lld_macro: '{#HDD_NAME}'
+              path: $.hddName
+            - lld_macro: '{#HDD_TYPE}'
+              path: $.hddType
+          preprocessing:
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var result = [];
+                  var blockPattern = /<(hdd|nas)[^>]*>([\s\S]*?)<\/\1>/g;
+                  var fieldPattern = /<(\w+)>(.*?)<\/\1>/g;
+                  var match;
+                  
+                  while ((match = blockPattern.exec(value)) !== null) {
+                      var blockType = match[1];
+                      var block = match[2];
+                      var fields = {};
+                      var field;
+                  
+                      fieldPattern.lastIndex = 0;
+                      while ((field = fieldPattern.exec(block)) !== null) {
+                          fields[field[1]] = field[2];
+                      }
+                  
+                      result.push({
+                          '{#HDD_ID}': fields['id'],
+                          '{#HDD_NAME}': blockType === 'nas' ? 'nas' + fields['id'] : fields['hddName'],
+                          '{#HDD_TYPE}': blockType === 'nas' ? fields['nasType'] : fields['hddType'],
+                          '{#HDD_KIND}': blockType
+                      });
+                  }
+                  
+                  return JSON.stringify(result);
+        - uuid: b06fafa38fee43f8928c8ba01bf77afb
+          name: 'ISAPI: Discover video input channels'
+          type: DEPENDENT
+          key: hikvision.video.channel.discovery
+          item_prototypes:
+            - uuid: 0ddb6d036f9b4e6f91a15b6deeaae668
+              name: 'DVR channel {#CHID}: Enabled'
+              type: DEPENDENT
+              key: 'hikvision.dvr.channel.enabled[{#CHID}]'
+              history: 10d
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.VideoInputChannelList.VideoInputChannel[?(@.id == "{#CHID}")].videoInputEnabled.first()'
+                - type: BOOL_TO_DECIMAL
+              master_item:
+                key: hikvision.dvr.video.inputs
+            - uuid: bf52598f92dd498ea784e023d1a50b8c
+              name: 'DVR channel {#CHID}: Name'
+              type: DEPENDENT
+              key: 'hikvision.dvr.channel.name[{#CHID}]'
+              history: 10d
+              value_type: CHAR
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.VideoInputChannelList.VideoInputChannel[?(@.id == "{#CHID}")].name.first()'
+              master_item:
+                key: hikvision.dvr.video.inputs
+            - uuid: 63617736bbb7436ab5bd3cffcbea9889
+              name: 'DVR channel {#CHID}: Resolution'
+              type: DEPENDENT
+              key: 'hikvision.dvr.channel.res[{#CHID}]'
+              history: 10d
+              value_type: CHAR
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.VideoInputChannelList.VideoInputChannel[?(@.id == "{#CHID}")].resDesc.first()'
+              master_item:
+                key: hikvision.dvr.video.inputs
+            - uuid: 65f98fb5f5af4213bbf35c3fdaa459b5
+              name: 'Channel {#CHID}: Retention (Days)'
+              type: HTTP_AGENT
+              key: 'hikvision.retention[{#CHID}]'
+              delay: 1d
+              value_type: FLOAT
+              units: days
+              authtype: DIGEST
+              username: YOUR_USERNAME
+              password: YOUR_PASSWORD
+              preprocessing:
+                - type: XMLPATH
+                  parameters:
+                    - 'string(//*[local-name()=''startTime''][1])'
+                - type: JAVASCRIPT
+                  parameters:
+                    - |
+                      // 'value' is the dynamic date string coming from your XPath (e.g., the oldest recording)
+                      var oldestRecording = new Date(value);
+                      var currentTime = new Date();
+                      
+                      // Calculate the difference in milliseconds between 'now' and the 'oldest recording'
+                      var diffInMilliseconds = currentTime.getTime() - oldestRecording.getTime();
+                      
+                      // Convert milliseconds to days
+                      var days = diffInMilliseconds / (1000 * 60 * 60 * 24);
+                      
+                      // Return the result as a number with 2 decimal places
+                      return days.toFixed(2);
+              url: 'http://{HOST.CONN}/ISAPI/ContentMgmt/search'
+              posts: |
+                <CMSearchDescription xmlns="http://www.hikvision.com/ver20/XMLSchema">
+                <searchID>D9834571-7965-4D46-9524-0000000000{#CHID_PADDED}</searchID>
+                <trackList><trackID>{#CHID}01</trackID></trackList>
+                <timeSpanList>
+                <timeSpan>
+                <startTime>2026-01-01T00:00:00Z</startTime>
+                <endTime>2035-12-31T23:59:59Z</endTime>
+                </timeSpan>
+                </timeSpanList>
+                <maxResults>1</maxResults>
+                <searchResultPostion>0</searchResultPostion>
+                <metadataList>
+                <metadataDescriptor>recordType.meta.hikvision.com/timing</metadataDescriptor>
+                </metadataList>
+                </CMSearchDescription>
+              headers:
+                - name: Content-Type
+                  value: application/xml
+              request_method: POST
+              trigger_prototypes:
+                - uuid: db3171db5d914a7992c3f5ff6ec18895
+                  expression: '(last(/Template Hikvision DVR-NVR ISAPI/hikvision.retention[{#CHID}]) < {$RETENTION_MIN_DAYS}) and (last(/Template Hikvision DVR-NVR ISAPI/hikvision.retention[{#CHID}]) > -1)'
+                  name: 'Low retention on channel {#CHID}: < {$RETENTION_DAYS} days'
+                  event_name: 'Less than {$RETENTION_DAYS} days of retention ({ITEM.VALUE}): Channel {#CHID}'
+                  priority: WARNING
+                  description: 'Data retention for camera {#CHNAME} has fallen below 30 days. Current retention: {{ITEM.LASTVALUE}} days.'
+                  manual_close: 'YES'
+          trigger_prototypes:
+            - uuid: cc3096eaccba4f2f97f6ee5cec42465b
+              expression: |
+                last(/Template Hikvision DVR-NVR ISAPI/hikvision.dvr.channel.enabled[{#CHID}])=1
+                and
+                last(/Template Hikvision DVR-NVR ISAPI/hikvision.dvr.channel.res[{#CHID}])="NO VIDEO"
+              name: 'DVR channel {#CHID} ({#CHNAME}): No video signal'
+              event_name: 'DVR no videl signal on channel {#CHID} ({#CHNAME})'
+              priority: HIGH
+              manual_close: 'YES'
+          master_item:
+            key: hikvision.dvr.video.inputs
+          lld_macro_paths:
+            - lld_macro: '{#CHENABLED}'
+              path: $.videoInputEnabled
+            - lld_macro: '{#CHID_PADDED}'
+              path: $.id_padded
+            - lld_macro: '{#CHID}'
+              path: $.id
+            - lld_macro: '{#CHNAME}'
+              path: $.name
+            - lld_macro: '{#CHPORT}'
+              path: $.inputPort
+            - lld_macro: '{#CHRES}'
+              path: $.resDesc
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.VideoInputChannelList.VideoInputChannel
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var data = JSON.parse(value);
+                  
+                  for (var i = 0; i < data.length; i++) {
+                      // Convert the ID to a string
+                      var rawId = data[i].id.toString();
+                  
+                      // Create the padded version (e.g., "1" becomes "01")
+                      data[i]["{#CHID_PADDED}"] = rawId.length < 2
+                          ? "0" + rawId
+                          : rawId;
+                  }
+                  
+                  return JSON.stringify(data);
+        - uuid: b818cf3f37c54f3a90d55e2d776124e4
+          name: 'ISAPI: Discover IP video input channels'
+          type: DEPENDENT
+          key: hikvision.video.channel.discovery.ip
+          item_prototypes:
+            - uuid: 825991b5c87248ebb8a7cc020d03760f
+              name: 'IP Channel {#CHID}: IP Address'
+              type: DEPENDENT
+              key: 'hikvision.ip.address[{#CHID}]'
+              history: 10d
+              value_type: CHAR
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.InputProxyChannelList.InputProxyChannel[?(@.id == "{#CHID}")].sourceInputPortDescriptor.ipAddress.first()'
+              master_item:
+                key: hikvision.dvr.video.inputs.ip
+            - uuid: e0b5ac7e14ae4912863ba2ee45e4342b
+              name: 'IP Channel {#CHID}: Firmware Version'
+              type: DEPENDENT
+              key: 'hikvision.ip.firmware[{#CHID}]'
+              history: 10d
+              value_type: CHAR
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.InputProxyChannelList.InputProxyChannel[?(@.id == "{#CHID}")].sourceInputPortDescriptor.firmwareVersion.first()'
+              master_item:
+                key: hikvision.dvr.video.inputs.ip
+            - uuid: d1c1f71502554307b7af3185631a670f
+              name: 'IP Channel {#CHID}: Model'
+              type: DEPENDENT
+              key: 'hikvision.ip.model[{#CHID}]'
+              history: 10d
+              value_type: CHAR
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.InputProxyChannelList.InputProxyChannel[?(@.id == "{#CHID}")].sourceInputPortDescriptor.model.first()'
+              master_item:
+                key: hikvision.dvr.video.inputs.ip
+            - uuid: 632674a381f0412cbb6588388f82bc6d
+              name: 'IP Channel {#CHID}: Name'
+              type: DEPENDENT
+              key: 'hikvision.ip.name[{#CHID}]'
+              history: 10d
+              value_type: CHAR
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.InputProxyChannelList.InputProxyChannel[?(@.id == "{#CHID}")].name.first()'
+              master_item:
+                key: hikvision.dvr.video.inputs.ip
+            - uuid: ce54376613c546ad94cd0663b67e5f66
+              name: 'IP Channel {#CHID}: Port'
+              type: DEPENDENT
+              key: 'hikvision.ip.port[{#CHID}]'
+              history: 10d
+              value_type: CHAR
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.InputProxyChannelList.InputProxyChannel[?(@.id == "{#CHID}")].sourceInputPortDescriptor.managePortNo.first()'
+              master_item:
+                key: hikvision.dvr.video.inputs.ip
+            - uuid: 12e9e56114c9482abaf546834bae95c3
+              name: 'IP Channel {#CHID}: Protocol'
+              type: DEPENDENT
+              key: 'hikvision.ip.protocol[{#CHID}]'
+              history: 10d
+              value_type: CHAR
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.InputProxyChannelList.InputProxyChannel[?(@.id == "{#CHID}")].sourceInputPortDescriptor.proxyProtocol.first()'
+              master_item:
+                key: hikvision.dvr.video.inputs.ip
+            - uuid: 11807a705d71422d9b44ab0d0a90e163
+              name: 'IP Channel {#CHID}: Retention (Days)'
+              type: HTTP_AGENT
+              key: 'hikvision.ip.retention[{#CHID}]'
+              delay: 1d
+              value_type: FLOAT
+              units: days
+              authtype: DIGEST
+              username: YOUR_USERNAME
+              password: YOUR_PASSWORD
+              preprocessing:
+                - type: XMLPATH
+                  parameters:
+                    - 'string(//*[local-name()=''startTime''][1])'
+                - type: JAVASCRIPT
+                  parameters:
+                    - |
+                      // 'value' is the dynamic date string coming from your XPath (e.g., the oldest recording)
+                      var oldestRecording = new Date(value);
+                      var currentTime = new Date();
+                      
+                      // Calculate the difference in milliseconds between 'now' and the 'oldest recording'
+                      var diffInMilliseconds = currentTime.getTime() - oldestRecording.getTime();
+                      
+                      // Convert milliseconds to days
+                      var days = diffInMilliseconds / (1000 * 60 * 60 * 24);
+                      
+                      // Return the result as a number with 2 decimal places
+                      return days.toFixed(2);
+              url: 'http://{HOST.CONN}/ISAPI/ContentMgmt/search'
+              posts: |
+                <CMSearchDescription xmlns="http://www.hikvision.com/ver20/XMLSchema">
+                <searchID>D9834571-7965-4D46-9524-0000000000{#CHID_PADDED}</searchID>
+                <trackList><trackID>{#CHID}01</trackID></trackList>
+                <timeSpanList>
+                <timeSpan>
+                <startTime>2026-01-01T00:00:00Z</startTime>
+                <endTime>2035-12-31T23:59:59Z</endTime>
+                </timeSpan>
+                </timeSpanList>
+                <maxResults>1</maxResults>
+                <searchResultPostion>0</searchResultPostion>
+                <metadataList>
+                <metadataDescriptor>recordType.meta.hikvision.com/timing</metadataDescriptor>
+                </metadataList>
+                </CMSearchDescription>
+              headers:
+                - name: Content-Type
+                  value: application/xml
+              request_method: POST
+              trigger_prototypes:
+                - uuid: e7c8c6b2cf3e4f3185088843c1906d2b
+                  expression: '(last(/Template Hikvision DVR-NVR ISAPI/hikvision.ip.retention[{#CHID}]) < {$RETENTION_MIN_DAYS}) and (last(/Template Hikvision DVR-NVR ISAPI/hikvision.ip.retention[{#CHID}]) > -1)'
+                  name: 'Low retention on IP channel {#CHID}: <  {$RETENTION_DAYS} days'
+                  event_name: 'Less than {$RETENTION_DAYS} days of retention ({ITEM.VALUE}): Channel {#CHID}'
+                  priority: WARNING
+                  manual_close: 'YES'
+            - uuid: 6c5437ea17dc47819e097153a7bcf5d6
+              name: 'IP Channel {#CHID}: Serial'
+              type: DEPENDENT
+              key: 'hikvision.ip.serial[{#CHID}]'
+              history: 10d
+              value_type: CHAR
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$.InputProxyChannelList.InputProxyChannel[?(@.id == "{#CHID}")].sourceInputPortDescriptor.serialNumber.first()'
+              master_item:
+                key: hikvision.dvr.video.inputs.ip
+          master_item:
+            key: hikvision.dvr.video.inputs.ip
+          lld_macro_paths:
+            - lld_macro: '{#CHENABLED}'
+              path: $.enableTiming
+            - lld_macro: '{#CHID_PADDED}'
+              path: $.id_padded
+            - lld_macro: '{#CHID}'
+              path: $.id
+            - lld_macro: '{#CHIP}'
+              path: $.sourceInputPortDescriptor.ipAddress
+            - lld_macro: '{#CHMODEL}'
+              path: $.sourceInputPortDescriptor.model
+            - lld_macro: '{#CHNAME}'
+              path: $.name
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.InputProxyChannelList.InputProxyChannel
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  // At this point, 'value' is already the array of channels due to the JSONPath
+                  var data = JSON.parse(value);
+                  
+                  // Ensure data is treated as an array to avoid errors if only one channel exists
+                  if (!Array.isArray(data)) {
+                      data = [data];
+                  }
+                  
+                  for (var i = 0; i < data.length; i++) {
+                      // 1. Ensure the ID is a string for Zabbix processing
+                      var rawId = String(data[i].id);
+                      data[i]["{#CHID}"] = rawId;
+                  
+                      // 2. Create the Padded ID (e.g., "9" -> "09", "10" -> "10")
+                      // This maintains compatibility with your search ID requirements
+                      data[i]["{#CHID_PADDED}"] = rawId.length < 2 ? "0" + rawId : rawId;
+                  }
+                  
+                  return JSON.stringify(data);
+      tags:
+        - tag: class
+          value: device
+        - tag: target
+          value: nvr-dvr
+      macros:
+        - macro: '{$RETENTION_DAYS}'
+          value: '30'
+          description: 'Default retention days for display'
+        - macro: '{$RETENTION_MIN_DAYS}'
+          value: '28.5'
+          description: 'Default retention days for the trigger'
+  triggers:
+    - uuid: 1ed293fb8c1c418cb1386a0098467436
+      expression: 'last(/Template Hikvision DVR-NVR ISAPI/hikvision.dvr.serial)<>last(/Template Hikvision DVR-NVR ISAPI/hikvision.dvr.serial,#2) and last(/Template Hikvision DVR-NVR ISAPI/hikvision.dvr.model)<>last(/Template Hikvision DVR-NVR ISAPI/hikvision.dvr.model,#2)'
+      name: 'DVR has been replaced'
+      priority: INFO
+      manual_close: 'YES'
