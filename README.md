@@ -196,7 +196,7 @@ This ensures channel `1` becomes `01` in the search ID, channel `10` stays `10`,
 
 ### How Retention is Calculated
 
-Recording retention is **not** reported directly by the device — it must be derived. For each discovered channel, the template sends a **POST** request to `/ISAPI/ContentMgmt/search` with an XML body that asks for the **earliest recorded segment** on that channel:
+Recording retention is **not** reported directly by the device, it must be derived. For each discovered channel, the template sends a **POST** request to `/ISAPI/ContentMgmt/search` with an XML body that asks for the **earliest recorded segment** on that channel:
 
 ```xml
 <CMSearchDescription xmlns="http://www.hikvision.com/ver20/XMLSchema">
