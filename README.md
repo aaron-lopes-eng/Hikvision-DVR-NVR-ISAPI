@@ -1,6 +1,6 @@
 # Hikvision DVR/NVR Monitoring via ISAPI (Zabbix Template)
 
-A Zabbix **7.4** template for monitoring Hikvision **DVR and NVR** devices using the proprietary **ISAPI** protocol. No agents, no SNMP — just authenticated HTTP calls directly to the device.
+A Zabbix **7.4** template for monitoring Hikvision **DVR and NVR** devices using the proprietary **ISAPI** protocol.
 
 ---
 
